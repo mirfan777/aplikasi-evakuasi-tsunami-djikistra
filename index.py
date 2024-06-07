@@ -38,7 +38,6 @@ def dijkstra_teraman(grafik, awal, node_tsunami, radius_tsunami, koordinat_tsuna
             if tetangga in node_dalam_radius:
                 penalty = 1 / jarak_euclidean(koordinat_node[tetangga], koordinat_tsunami)
                 jarak_ke_tetangga += penalty
-                print( tetangga , jarak_ke_tetangga , jarak_euclidean(koordinat_node[tetangga], koordinat_tsunami))
 
             if jarak_ke_tetangga < jarak[tetangga]:  # Pindahkan baris ini ke bawah
                 jarak[tetangga] = jarak_ke_tetangga
@@ -89,6 +88,19 @@ grafik = {
     'J': {'G': 8000, 'H': 4000, 'E': 5000, 'F': 3000}
 }
 
+titik_node = {
+        'A': (-7.320263597422809, 106.38700097895915),
+        'B': (-7.327335645548595, 106.39379789658742),
+        'C': (-7.346744809747519, 106.40006353675817),
+        'D': (-7.31648366862809, 106.39994904743742),
+        'E': (-7.3250310512411385, 106.42184570989399),
+        'F': (-7.334834963647136, 106.44385137785989),
+        'G': (-7.369222739821226, 106.40176628645538),
+        'H': (-7.356241897165464, 106.43202231783063),
+        'I': (-7.361327279085154, 106.45268502787167),
+        'J': (-7.341388139768801, 106.42616224160027)
+    }
+
 titik_tsunami = {
     'K': (-7.342662497731154, 106.37145236233276),
     'L': (-7.394529726795235, 106.44319618091892),
@@ -107,8 +119,16 @@ else:
     print('Tidak ada titik posisi tsunami', koordinat_tsunami)
     exit()  # Keluar dari program jika input tidak valid
 
-node_awal = input("Masukkan node awal: ")  # Node awal
-node_awal = node_awal.upper()
+for key in titik_node:
+    print('Titik Posisi node awal', key, 'dengan titik koordinat', titik_node[key])
+
+node_awal = input("Masukkan Node Awal (A/B/C...): ")  # Node awal
+if node_awal.upper() in grafik:
+    node_awal = node_awal.upper()
+else:
+    print('Node awal tidak ada dalam grafik')
+    exit()
+
 radius_tsunami = int(input("Masukkan radius tsunami (meter): "))  # Radius tsunami
 
 jarak, predecessor, koordinat_node = dijkstra_teraman(grafik, node_awal, node_tsunami, radius_tsunami, koordinat_tsunami)
@@ -131,7 +151,7 @@ if node_teraman_tercepat is None:
     # Jika node awal sudah merupakan node terjauh dari tsunami, tidak ada node tujuan
     if jarak_node_awal_ke_tsunami > min_jarak_ke_tsunami: # type: ignore
         print(f"Node {node_awal} sudah merupakan node terjauh dari pusat tsunami.")
-        jalur_terpendek = [node_awal]
+        jalur_terpendek=[]
     else:
         print(f"Tidak ada posisi yang aman dari node {node_awal} dengan radius tsunami {radius_tsunami} pada koordinat {koordinat_tsunami}")
         jalur_terpendek=[]
@@ -176,7 +196,7 @@ folium.LayerControl().add_to(peta)
 peta.save('peta.html')
 
 # Buka peta di web browser
-webbrowser.open('peta.html')
+# webbrowser.open('peta.html')
 
 node_dalam_radius = temukan_node_dalam_radius(koordinat_node, koordinat_tsunami, radius_tsunami)
 print(f"Node yang terkena radius tsunami {radius_tsunami} meter pada koordinat {koordinat_tsunami} adalah: {node_dalam_radius}")
